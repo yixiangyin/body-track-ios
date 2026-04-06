@@ -5,18 +5,21 @@
 
 // TODO: how to make the changes persist
 // TODO: how to add a time label date and weekday for each day, if there are multiple aggregate under one title
-// TODO: how to sort the history in reverse, latest first
+// TODO: add some button for body weight exercise to adjust the weight maybe a tickbox?
+
 import SwiftUI
 
 struct ExerciseDetailView: View {
     @Binding var exercise: Exercise
     @State private var repsText: String = ""
+    @State private var weightText: String = ""
 
     private var canSave: Bool {
-        guard let reps = Int(repsText.trimmingCharacters(in: .whitespacesAndNewlines)) else {
+        guard let reps = Int(repsText.trimmingCharacters(in: .whitespacesAndNewlines)),
+                let weight = Double(weightText.trimmingCharacters(in: .whitespacesAndNewlines)) else {
             return false
         }
-        return reps > 0
+        return reps > 0 && weight >= 0
     }
 
     var body: some View {
@@ -26,26 +29,27 @@ struct ExerciseDetailView: View {
                     .font(.headline)
             }
 
-            Section("Add Reps") {
-                TextField("Enter reps", text: $repsText)
+            Section("Add Entry") {
+                TextField("Weight (kg)", text: $weightText).keyboardType(.decimalPad)
+                TextField("Reps", text: $repsText)
                     .keyboardType(.numberPad)
 
-                Button("Save Reps") {
-                    saveReps()
+                Button("Save") {
+                    save()
                 }
                 .disabled(!canSave)
             }
 
-            Section("Reps History") {
+            Section("History") {
                 if exercise.history.isEmpty {
                     Text("No reps recorded yet.")
                         .foregroundStyle(.secondary)
                 } else {
-                    ForEach(Array(exercise.history.enumerated().reversed()), id: \.offset) { index, reps in
+                    ForEach(Array(exercise.history.enumerated().reversed()), id: \.offset) { index, entry in
                         HStack {
-                            Text("Set \(index + 1)")
+                            Text("\(formatWeight(entry.weight))kg")
                             Spacer()
-                            Text("\(reps) reps")
+                            Text("\(entry.reps) reps")
                                 .foregroundStyle(.secondary)
                         }
                     }
@@ -55,11 +59,26 @@ struct ExerciseDetailView: View {
         .navigationTitle(exercise.name)
     }
 
-    private func saveReps() {
-        let trimmed = repsText.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard let reps = Int(trimmed), reps > 0 else { return }
+    private func save() {
+        let trimmedReps = repsText.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedWeight = weightText.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        guard let reps = Int(trimmedReps),
+              let weight = Double(trimmedWeight),
+              reps > 0,
+              weight >= 0 else { return }
 
-        exercise.history.append(reps)
+        let newEntry = ExerciseHistoryEntry(date: Date(), weight: weight, reps: reps)
+        exercise.history.append(newEntry)
+
         repsText = ""
+        weightText = ""
+    }
+    private func formatWeight(_ weight: Double) -> String {
+        if weight == floor(weight) {
+            return String(Int(weight))
+        } else {
+            return String(weight)
+        }
     }
 }

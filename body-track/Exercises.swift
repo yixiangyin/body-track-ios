@@ -12,9 +12,28 @@ import Combine
 @MainActor
 final class Exercises: ObservableObject {
     
-    @Published var exercises: [Exercise] = [        Exercise(name: "Bench Press", history: [10, 8, 6]),
-                                                    Exercise(name: "Squat", history: [12, 10, 8]),
-                                                    Exercise(name: "Push Up", history: [])]
+    @Published var exercises: [Exercise] = [
+        Exercise(
+            name: "Bench Press",
+            history: [
+                ExerciseHistoryEntry(
+                    date: Calendar.current.date(byAdding: .day, value: -7, to: Date())!,
+                    weight: 20,
+                    reps: 15
+                ),
+                ExerciseHistoryEntry(
+                    date: Calendar.current.date(byAdding: .day, value: -7, to: Date())!,
+                    weight: 20,
+                    reps: 15
+                ),
+                ExerciseHistoryEntry(
+                    date: Calendar.current.date(byAdding: .day, value: -14, to: Date())!,
+                    weight: 15,
+                    reps: 16
+                )
+            ]
+        )
+    ]
     
     func add(name: String) {
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
