@@ -12,7 +12,9 @@ import Combine
 @MainActor
 final class Exercises: ObservableObject {
     
-    @Published var exercises: [Exercise] = []
+    @Published var exercises: [Exercise] = [        Exercise(name: "Bench Press", history: [10, 8, 6]),
+                                                    Exercise(name: "Squat", history: [12, 10, 8]),
+                                                    Exercise(name: "Push Up", history: [])]
     
     func add(name: String) {
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
