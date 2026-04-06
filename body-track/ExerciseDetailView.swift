@@ -3,6 +3,9 @@
 //  body-track
 //
 
+// TODO: how to make the changes persist
+// TODO: how to add a time label date and weekday for each day, if there are multiple aggregate under one title
+// TODO: how to sort the history in reverse, latest first
 import SwiftUI
 
 struct ExerciseDetailView: View {
@@ -38,7 +41,7 @@ struct ExerciseDetailView: View {
                     Text("No reps recorded yet.")
                         .foregroundStyle(.secondary)
                 } else {
-                    ForEach(Array(exercise.history.enumerated()), id: \.offset) { index, reps in
+                    ForEach(Array(exercise.history.enumerated().reversed()), id: \.offset) { index, reps in
                         HStack {
                             Text("Set \(index + 1)")
                             Spacer()
