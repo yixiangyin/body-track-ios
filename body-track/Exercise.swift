@@ -10,4 +10,5 @@ import Foundation
 struct Exercise: Identifiable {
     let id: UUID = UUID()
     var name: String
+    var history: [Int] = []
 }

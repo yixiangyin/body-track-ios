@@ -18,11 +18,14 @@ struct ContentView: View {
                     Text("No exercises yet. Tap + to add one.")
                         .foregroundStyle(.secondary)
                 } else {
-                    ForEach(store.exercises) { ex in
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(ex.name)
-                                .font(.headline)
-
+                    ForEach($store.exercises) { $exercise in
+                        NavigationLink {
+                            ExerciseDetailView(exercise: $exercise)
+                        } label: {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(exercise.name)
+                                    .font(.headline)
+                            }
                         }
                     }
                     .onDelete(perform: store.delete)
