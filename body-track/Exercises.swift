@@ -16,22 +16,38 @@ final class Exercises: ObservableObject {
         Exercise(
             name: "Bench Press",
             history: [
-                ExerciseHistoryEntry(
-                    date: Calendar.current.date(byAdding: .day, value: -7, to: Date())!,
-                    weight: 20,
-                    reps: 15
-                ),
-                ExerciseHistoryEntry(
-                    date: Calendar.current.date(byAdding: .day, value: -7, to: Date())!,
-                    weight: 20,
-                    reps: 15
-                ),
-                ExerciseHistoryEntry(
-                    date: Calendar.current.date(byAdding: .day, value: -14, to: Date())!,
-                    weight: 15,
-                    reps: 16
-                )
-            ]
+                 ExerciseHistoryEntry(
+                     date: Calendar.current.date(byAdding: .day, value: -7, to: Date())!,
+                     weight: 20,
+                     reps: 15
+                 ),
+                 ExerciseHistoryEntry(
+                     date: Calendar.current.date(byAdding: .day, value: -8, to: Date())!,
+                     weight: 20,
+                     reps: 15
+                 ),
+                 ExerciseHistoryEntry(
+                     date: Calendar.current.date(byAdding: .day, value: -14, to: Date())!,
+                     weight: 15,
+                     reps: 16
+                 ),
+                 ExerciseHistoryEntry(
+                     date: Calendar.current.date(byAdding: .day, value: -21, to: Date())!,
+                     weight: 12.5,
+                     reps: 12
+                 ),
+                 ExerciseHistoryEntry(
+                     date: Calendar.current.date(byAdding: .month, value: -1, to: Date())!,
+                     weight: 10,
+                     reps: 20
+                 ),
+                 ExerciseHistoryEntry(
+                     date: Calendar.current.date(byAdding: .year, value: -1, to: Date())!,
+                     weight: 5,
+                     reps: 25
+                 )
+             ]
+
         ),
         Exercise(
             name: "Overhead Press",

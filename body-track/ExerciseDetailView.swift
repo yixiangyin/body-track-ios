@@ -40,18 +40,23 @@ struct ExerciseDetailView: View {
                 .disabled(!canSave)
             }
 
+
             Section("History") {
                 if exercise.history.isEmpty {
-                    Text("No reps recorded yet.")
+                    Text("No history recorded yet.")
                         .foregroundStyle(.secondary)
                 } else {
-                    ForEach(Array(exercise.history.enumerated().reversed()), id: \.offset) { index, entry in
-                        HStack {
-                            Text("\(formatWeight(entry.weight))kg")
-                            Spacer()
-                            Text("\(entry.reps) reps")
-                                .foregroundStyle(.secondary)
+                    ForEach(groupedHistory, id: \.title) { group in
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(group.title)
+                                .font(.headline)
+
+                            ForEach(group.entries) { entry in
+                                Text("\(formatWeight(entry.weight))kg \(entry.reps) reps")
+                                    .foregroundStyle(.secondary)
+                            }
                         }
+                        .padding(.vertical, 4)
                     }
                 }
             }
@@ -74,6 +79,80 @@ struct ExerciseDetailView: View {
         repsText = ""
         weightText = ""
     }
+    private var groupedHistory: [(title: String, entries: [ExerciseHistoryEntry])] {
+        let calendar = Calendar.current
+
+        let grouped = Dictionary(grouping: exercise.history) { entry in
+            relativeDateLabel(for: entry.date, using: calendar)
+        }
+
+        let sortedGroups = grouped.map { key, value in
+            (
+                title: key,
+                sortKey: relativeDateSortKey(for: value.first!.date, using: calendar),
+                entries: value.sorted { $0.date > $1.date }
+            )
+        }
+        .sorted { $0.sortKey < $1.sortKey }
+
+        return sortedGroups.map { ($0.title, $0.entries) }
+    }
+
+    private func relativeDateLabel(for date: Date, using calendar: Calendar) -> String {
+        let now = Date()
+
+        if calendar.isDate(date, equalTo: now, toGranularity: .year) &&
+           calendar.isDate(date, equalTo: now, toGranularity: .month) &&
+           calendar.isDate(date, equalTo: now, toGranularity: .weekOfYear) {
+            let formatter = DateFormatter()
+            formatter.locale = Locale.current
+            formatter.dateFormat = "EEEE"
+            let weekday = formatter.string(from: date)
+            return "This week on \(weekday)"
+        }
+        
+        let years = calendar.dateComponents([.year], from: date, to: now).year ?? 0
+        if years >= 1 {
+            return years == 1 ? "1 year ago" : "\(years) years ago"
+        }
+
+        let months = calendar.dateComponents([.month], from: date, to: now).month ?? 0
+        if months >= 1 {
+            return months == 1 ? "1 month ago" : "\(months) months ago"
+        }
+
+        let weeks = calendar.dateComponents([.weekOfYear], from: date, to: now).weekOfYear ?? 0
+        if weeks <= 1 {
+            return "Last week"
+        } else {
+            return "\(weeks) weeks ago"
+        }
+    }
+
+    private func relativeDateSortKey(for date: Date, using calendar: Calendar) -> Int {
+        let now = Date()
+
+        if calendar.isDate(date, equalTo: now, toGranularity: .year) &&
+           calendar.isDate(date, equalTo: now, toGranularity: .month) &&
+           calendar.isDate(date, equalTo: now, toGranularity: .weekOfYear) {
+            let weekday = calendar.component(.weekday, from: date)
+            return weekday
+        }
+
+        let years = calendar.dateComponents([.year], from: date, to: now).year ?? 0
+        if years >= 1 {
+            return years * 1000
+        }
+
+        let months = calendar.dateComponents([.month], from: date, to: now).month ?? 0
+        if months >= 1 {
+            return months * 100
+        }
+
+        let weeks = max(1, calendar.dateComponents([.weekOfYear], from: date, to: now).weekOfYear ?? 1)
+        return 10 + weeks
+    }
+
     private func formatWeight(_ weight: Double) -> String {
         if weight == floor(weight) {
             return String(Int(weight))
