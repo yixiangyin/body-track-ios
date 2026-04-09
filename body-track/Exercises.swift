@@ -32,6 +32,26 @@ final class Exercises: ObservableObject {
                     reps: 16
                 )
             ]
+        ),
+        Exercise(
+            name: "Overhead Press",
+            history: [
+                ExerciseHistoryEntry(
+                    date: Calendar.current.date(byAdding: .day, value: -7, to: Date())!,
+                    weight: 20,
+                    reps: 5
+                ),
+                ExerciseHistoryEntry(
+                    date: Calendar.current.date(byAdding: .day, value: -7, to: Date())!,
+                    weight: 17.5,
+                    reps: 5
+                ),
+                ExerciseHistoryEntry(
+                    date: Calendar.current.date(byAdding: .day, value: -14, to: Date())!,
+                    weight: 15,
+                    reps: 5
+                )
+            ]
         )
     ]
     
